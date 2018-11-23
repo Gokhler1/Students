@@ -1,0 +1,48 @@
+Sub Method1()
+'
+'
+Dim Number_of_row As Long
+Dim LastRow As Long
+
+
+'store an array of sheets
+Dim ws As Worksheet
+Dim shtArray() As String
+Dim intA As Integer
+
+intA = 0
+' First you need to enter the sheet names into an array
+For Each ws In ActiveWorkbook.Worksheets
+    
+    intA = intA + 1
+    ReDim Preserve shtArray(intA)
+    shtArray(intA) = ws.Name
+
+'find number of row
+Application.ActiveSheet.UsedRange
+Number_of_row = Worksheets(shtArray(intA)).UsedRange.Rows.Count
+
+'copy and find unique names of stocks
+    Sheets(shtArray(intA)).Select
+    Range("A1:A" & Number_of_row).Copy
+    Range("J1").Select
+    ActiveSheet.Paste
+    Columns("J:J").RemoveDuplicates Columns:=1, Header:= _
+        xlYes
+
+
+LastRow = Cells(Rows.Count, 10).End(xlUp).Row
+
+Range("k1") = "Total Volume"
+
+Range("K2").Select
+    ActiveCell.FormulaR1C1 = "=SUMIF(C[-10],RC[-1],C[-4])"
+
+Selection.AutoFill Destination:=Range("K2:K" & LastRow)
+
+
+Next ws
+
+
+End Sub
+
